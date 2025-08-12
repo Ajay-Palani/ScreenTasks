@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Apimethods {
@@ -10,18 +11,20 @@ class Apimethods {
   Future<dynamic> getData() async {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
-      return response.body;
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to load');
     }
   }
 
   Future<dynamic> getPage2() async {
-    final response = await http.get(Uri.parse(url1));
+    final response = await http.get(
+      Uri.parse(url1),
+      headers: {'x-api-key': 'reqres-free-v1'},
+    );
 
     if (response.statusCode == 200) {
-      print("Response:${response.body}");
-      return response.body;
+      return jsonDecode(response.body);
     } else {
       throw Exception('Page 2 not loaded ${response.statusCode}');
     }

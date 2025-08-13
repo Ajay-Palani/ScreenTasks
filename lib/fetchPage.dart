@@ -51,6 +51,22 @@ class _FetchPageState extends State<FetchPage> {
               iconColor: Color.fromARGB(200, 255, 255, 255),
               itemBuilder: (context) {
                 return <PopupMenuEntry<String>>[
+                  PopupMenuItem(value: 'newgroup', child: Text('New group')),
+                  PopupMenuItem(
+                    value: 'newCommunity',
+                    child: Text('New community'),
+                  ),
+                  PopupMenuItem(
+                    value: 'newBroadcast',
+                    child: Text('New broadcast'),
+                  ),
+                  PopupMenuItem(
+                    value: 'linkedDevices',
+                    child: Text('Linked devices'),
+                  ),
+                  PopupMenuItem(value: 'starred', child: Text('Starred')),
+                  PopupMenuItem(value: 'payments', child: Text('Payments')),
+                  PopupMenuItem(value: 'readAll', child: Text('Read all')),
                   PopupMenuItem(value: 'settings', child: Text('Settings')),
                 ];
               },
@@ -90,7 +106,6 @@ class _FetchPageState extends State<FetchPage> {
                     ),
                   ),
                 ),
-
                 SizedBox(
                   width: 90,
                   child: Tab(

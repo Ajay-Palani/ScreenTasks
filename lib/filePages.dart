@@ -70,10 +70,19 @@ class _FilepagesState extends State<Filepages> {
                   children: [TextSpan(text: 'File Uploads'), TextSpan(text: '>'), TextSpan(text: '${folder}'),  ])),
         ),
           Expanded(child: ListView.builder(
-            itemCount: images.length,
+            itemCount:(folder=='Photos')? images.length:(folder=='Videos')?videos.length:(folder=='Documents')?files.length:null,
             itemBuilder: (context, index) {
-            return ListTile(leading: Icon(Icons.file_copy),);
-          },))
+              if(folder=='Photos'){
+                return ListTile(leading: Icon(Icons.image),title: Text(images[index].path.split('/').last),);
+
+              }
+              else if(folder=='Videos'){
+                return ListTile(leading: Icon(Icons.video_camera_back),title: Text(videos[index].path.split('/').last),);
+              }
+              else if(folder=='Documents'){
+                return ListTile(leading: Icon(Icons.file_copy),title: Text(files[index].path.split('/').last),);
+              }
+              },))
         ],
       ),
     );

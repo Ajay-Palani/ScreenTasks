@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:task5/Bloc/chatBloc.dart';
+import 'package:task5/Screens/chatScreen.dart';
 
 import 'fileUpload.dart';
 
@@ -34,7 +37,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: FileUpload(),
+      home: Chatscreen(),
     );
   }
 }

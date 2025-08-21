@@ -2,15 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task5/Api/apiMethods.dart';
 
-abstract class ChatEvent extends Equatable{
+class ChatEvent extends Equatable{
   @override
   // TODO: implement props
   List<Object?> get props => [];
-
 }
 
-class LoadChat extends ChatEvent{}
-abstract class ChatState extends Equatable{
+class LoadChatEvent extends ChatEvent{}
+class ChatState extends Equatable{
   @override
   // TODO: implement props
   List<Object?> get props => [];
@@ -18,7 +17,10 @@ abstract class ChatState extends Equatable{
 }
 
 class InitialState extends ChatState{}
-class LoadedChats extends ChatState{}
+class LoadedChats extends ChatState{
+  // List<dynamic> users=[];
+  // LoadedChats(this.users);
+}
 class ChatSuccess extends ChatState{
   List<dynamic> users=[];
   ChatSuccess(this.users);
@@ -27,26 +29,24 @@ class ChatEmpty extends ChatState{}
 class ChatError extends ChatState{
   String error;
   ChatError(this.error);
-
 }
 
 class ChatBloc extends Bloc<ChatEvent, ChatState>{
   ChatBloc():super(InitialState()) {
-    on<LoadChat>((event, emit) async {
+    on<LoadChatEvent>((event, emit) async {
       emit(LoadedChats());
-      try{
-        final response= await ApiMethods().getChats();
-        final users=response['data'];
-        if(users==null || users==''){
+
+      try {
+        final response = await ApiMethods().getChats();
+        final users = response['data'];
+        if(users == null || users.isEmpty){
           emit(ChatEmpty());
-        }else{
+        } else {
           emit(ChatSuccess(users));
         }
-      }catch(e){
-        final error= 'Failed to Load';
-        emit(ChatError(error));
+      } catch (e) {
+        emit(ChatError("Failed to load"));
       }
     });
   }
-
 }

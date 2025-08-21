@@ -235,27 +235,6 @@ class _FileUploadState extends State<FileUpload> {
                       },
                     ),
                   ),
-                  // Files
-                  // Padding(
-                  //   padding: const EdgeInsets.all(5.0),
-                  //   child: files.isEmpty
-                  //       ? const Center(child: Text('No files'))
-                  //       : ListView.builder(
-                  //     itemCount: files.length,
-                  //     itemBuilder: (context, index) {
-                  //       return ListTile(
-                  //         leading: const Icon(Icons.insert_drive_file),
-                  //         title: Text(files[index].path.split('/').last),
-                  //         onTap:  () {
-                  //           String filepath=files[index].path;
-                  //           print("Files: ${filepath}");
-                  //           openUploadFile(filepath);
-                  //           },
-                  //       );
-                  //
-                  //     },
-                  //   ),
-                  // ),
 
                   Padding(padding: EdgeInsets.all(5), child: ListView.builder(
                     itemCount: folders.length,

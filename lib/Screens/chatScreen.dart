@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:task5/Screens/individualChat.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../Bloc/chatBloc.dart';
+import 'individualChat.dart';
+
 class Chatscreen extends StatefulWidget {
   const Chatscreen({super.key});
 
@@ -14,104 +16,181 @@ class Chatscreen extends StatefulWidget {
 class _ChatscreenState extends State<Chatscreen> {
   @override
   Widget build(BuildContext context) {
-    double width= MediaQuery.of(context).size.width*1;
-    double height= MediaQuery.of(context).size.height*1;
     return BlocProvider(
-      create: (context) {
-        return ChatBloc()..add(LoadChat()) ;
-      },
-
+      create: (_) => ChatBloc(),
       child: DefaultTabController(
         length: 4,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: const Color.fromARGB(237, 7, 94, 80),
-            title: Text('WhatsApp', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),), actions: [Icon(Icons.camera_alt_sharp, color: Colors.white,),SizedBox(width: 20,), Icon(Icons.search, color: Colors.white,), PopupMenuButton(
-            iconColor: Colors.white,
-            itemBuilder: (context) {
-            return <PopupMenuEntry<String>>[PopupMenuItem(child: Text('New Community')), PopupMenuItem(child: Text('New Broadcast')), PopupMenuItem(child: Text('Linked Device')), PopupMenuItem(child: Text('Starred')),PopupMenuItem(child: Text('Payments')), PopupMenuItem(child: Text('Read All')), PopupMenuItem(child: Text('Settings'))];
-          },)],
-            bottom: TabBar(
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorColor: Colors.white,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                tabs: [Tab(icon: Icon(Icons.groups, color: Colors.white,), ), SizedBox(
-                  width: 80,
-                    child: Tab(child: Text('Chats', style: TextStyle(color: Colors.white),),)),
-                  SizedBox(
-                    width: 80,
-                      child: Tab(child: Text('Status', style: TextStyle(color: Colors.white),),)),
-                  SizedBox(
-                    width: 80,
-                      child: Tab(child: Text('Calls', style: TextStyle(color: Colors.white),),))]),
-          ),
-          body: BlocListener<ChatBloc, ChatState>(listener: (context, state) {
-            if(state is ChatError){
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load')));
-            }
-          },child: BlocBuilder<ChatBloc, ChatState>(builder: (context, state) {
-            return TabBarView(children: [Center(child: Text('Community'),),
-              getChats(state),
-              Center(child: Text('Status'),), Center(child: Text('Calls'),)]);
-          },),)
+        child: Builder(
+          builder: (context) {
+            final tabControl = DefaultTabController.of(context);
 
+            tabControl.addListener(() {
+              if (tabControl.index == 1 && !tabControl.indexIsChanging) {
+                context.read<ChatBloc>().add(LoadChatEvent());
+              }
+            });
+
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: const Color.fromARGB(237, 7, 94, 80),
+                title: const Text(
+                  'WhatsApp',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.camera_alt),
+                    color: Colors.white,
+                    onPressed: () {
+                      ImagePicker().pickImage(source: ImageSource.camera);
+                    },
+                  ),
+                  const SizedBox(width: 20),
+                  const Icon(Icons.search, color: Colors.white),
+                  PopupMenuButton(
+                    iconColor: Colors.white,
+                    itemBuilder: (context) {
+                      return const [
+                        PopupMenuItem(child: Text('New Community')),
+                        PopupMenuItem(child: Text('New Broadcast')),
+                        PopupMenuItem(child: Text('Linked Device')),
+                        PopupMenuItem(child: Text('Starred')),
+                        PopupMenuItem(child: Text('Payments')),
+                        PopupMenuItem(child: Text('Read All')),
+                        PopupMenuItem(child: Text('Settings')),
+                      ];
+                    },
+                  ),
+                ],
+                bottom: const TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorColor: Colors.white,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  tabs: [
+                    Tab(icon: Icon(Icons.groups, color: Colors.white)),
+                    SizedBox(
+                        width: 80,
+                        child: Tab(
+                            child: Text('Chats',
+                                style: TextStyle(color: Colors.white)))),
+                    SizedBox(
+                        width: 80,
+                        child: Tab(
+                            child: Text('Status',
+                                style: TextStyle(color: Colors.white)))),
+                    SizedBox(
+                        width: 80,
+                        child: Tab(
+                            child: Text('Calls',
+                                style: TextStyle(color: Colors.white)))),
+                  ],
+                ),
+              ),
+              body: BlocListener<ChatBloc, ChatState>(
+                listener: (context, state) {
+                  if (state is ChatError) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(
+                          state.error,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        actions: [
+                          OutlinedButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("Ok"))
+                        ],
+                      ),
+                    );
+                  }
+                },
+                child: BlocBuilder<ChatBloc, ChatState>(
+                  builder: (context, state) {
+                    return TabBarView(
+                      children: [
+                        const Center(child: Text("Community")),
+                        getChats(state),
+                        const Center(child: Text("Status")),
+                        const Center(child: Text("Calls")),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
-  Widget getChats(ChatState state){
-    if(state is LoadedChats){
-      return Center(
 
-        child:  Shimmer.fromColors(
-          baseColor: Colors.red,
+  Widget getChats(ChatState state) {
+    if (state is LoadedChats) {
+      return ListView.builder(
+
+        itemBuilder: (context, index) =>  Shimmer.fromColors(
+          baseColor: Colors.grey,
           highlightColor: Colors.grey[300]!,
-          child: Container(
-            height: 20,
-            width: 100,
-            decoration: BoxDecoration(color: Colors.red),
+          child: const ListTile(
+            leading: CircleAvatar(radius: 25, backgroundColor: Colors.white),
+            title: SizedBox(
+              height: 15,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ),
+            subtitle: SizedBox(
+              height: 12,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ),
           ),
-        )
+        ),
       );
-    }
-    else if(state is ChatSuccess){
-      final users= state.users;
+    } else if (state is ChatSuccess) {
+      final users = state.users;
       return ListView.builder(
         itemCount: users.length,
-        itemBuilder: (context, index) {
-
-        return InkWell(
+        itemBuilder: (context, index) => InkWell(
           onTap: () {
-
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Individualchat(users[index]),));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>  Individualchat(users[index])),
+            );
           },
-          child: Padding(padding: EdgeInsets.all(5), child: ListTile(leading: CircleAvatar(backgroundImage: NetworkImage('${users[index]['avatar']}'),radius: 30,),title: Text('${users[index]['first_name']} ${users[index]['last_name']}', style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),),subtitle: Text('${users[index]['email']}', style: TextStyle(
-            color: Colors.black54,
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-          ),), trailing: Text('7:30',style: TextStyle(
-            color: Colors.black54,
-            fontWeight: FontWeight.w500,
-            fontSize: 12,
-          ),),),),
-        );
-      },);
-    }
-    else if(state is ChatEmpty){
-      return Center(child: Text('No Data Available'),);
-    }
-    else if(state is ChatError){
-      return AlertDialog(
-        title: Text('${state}'),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage("${users[index]['avatar']}"),
+              radius: 30,
+            ),
+            title: Text(
+              "${users[index]['first_name']} ${users[index]['last_name']}",
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            subtitle: Text(
+              "${users[index]['email']}",
+              style: const TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            trailing: const Text(
+              "7:30",
+              style: TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ),
+        ),
       );
+    } else if (state is ChatEmpty) {
+      return const Center(child: Text("No Data Available"));
+    } else if (state is ChatError) {
+      return Center(child: Text('No Data'));
     }
-    else{
-      return Center();
-    }
+    return const SizedBox();
   }
 }

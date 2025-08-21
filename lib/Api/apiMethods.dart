@@ -11,7 +11,6 @@ class ApiMethods{
     }
     else{
       throw Exception('Failed to load');
-
     }
   }
 }

@@ -1,35 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:task5/Bloc/cubitChatBloc.dart';
 
-import '../Bloc/chatBloc.dart';
-import 'individualChat.dart';
-
-class Chatscreen extends StatefulWidget {
-  const Chatscreen({super.key});
+class Cubitchatscreen extends StatefulWidget {
+  const Cubitchatscreen({super.key});
 
   @override
-  State<Chatscreen> createState() => _ChatscreenState();
+  State<Cubitchatscreen> createState() => _CubitchatscreenState();
 }
 
-class _ChatscreenState extends State<Chatscreen> {
-
+class _CubitchatscreenState extends State<Cubitchatscreen> {
   List<dynamic> users=[];
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ChatBloc(),
+      create: (context) => CubitChatBloc(),
       child: DefaultTabController(
         length: 4,
-        child: BlocBuilder<ChatBloc, ChatState>(
+        child: BlocBuilder<CubitChatBloc, CubitChatState>(
           builder: (context, state) {
             final tabControl = DefaultTabController.of(context);
 
             tabControl.addListener(() {
               if (tabControl.index == 1 && !tabControl.indexIsChanging) {
-                context.read<ChatBloc>().add(LoadChatEvent());
+                context.read<CubitChatBloc>().add(LoadCubitChatEvent());
               }
             });
 
@@ -49,8 +46,8 @@ class _ChatscreenState extends State<Chatscreen> {
                       ImagePicker().pickImage(source: ImageSource.camera);
                     },
                   ),
-                   SizedBox(width: 20),
-                   Icon(Icons.search, color: Colors.white),
+                  SizedBox(width: 20),
+                  Icon(Icons.search, color: Colors.white),
                   PopupMenuButton(
                     iconColor: Colors.white,
                     itemBuilder: (context) {
@@ -77,9 +74,9 @@ class _ChatscreenState extends State<Chatscreen> {
                   ],
                 ),
               ),
-              body: BlocListener<ChatBloc, ChatState>(
+              body: BlocListener<CubitChatBloc, CubitChatState>(
                 listener: (context, state) {
-                  if (state is ChatError) {
+                  if (state is CubitChatLoadError) {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -98,12 +95,12 @@ class _ChatscreenState extends State<Chatscreen> {
                     );
                   }
                 },
-                child: BlocBuilder<ChatBloc, ChatState>(
+                child: BlocBuilder<CubitChatBloc, CubitChatState>(
                   builder: (context, state) {
                     return TabBarView(
                       children: [ Center(child: Text("Community")), getChats(state),
-                         Center(child: Text("Status")),
-                         Center(child: Text("Calls")),
+                        Center(child: Text("Status")),
+                        Center(child: Text("Calls")),
                       ],
                     );
                   },
@@ -116,8 +113,8 @@ class _ChatscreenState extends State<Chatscreen> {
     );
   }
 
-  Widget getChats(ChatState state) {
-    if (state is LoadedChats) {
+  Widget getChats(CubitChatState state) {
+    if (state is CubitLoadingChatState) {
       return ListView.builder(
         itemCount: 6,
         itemBuilder: (context, index) =>  Shimmer.fromColors(
@@ -132,17 +129,13 @@ class _ChatscreenState extends State<Chatscreen> {
           ),
         ),
       );
-    } else if (state is ChatSuccess) {
-       users = state.users;
+    } else if (state is CubitChatLoadSuccess) {
+      users = state.cubit_users;
       return ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) => InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>  Individualchat(users[index])),
-            );
+            print('Tapped');
           },
           child: ListTile(
             leading: CircleAvatar(
@@ -153,13 +146,13 @@ class _ChatscreenState extends State<Chatscreen> {
             ),
             subtitle: Text("${users[index]['email']}", style:  TextStyle(fontSize: 16, color: Colors.black54),
             ), trailing:  Text("7:30", style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
+          ),
           ),
         ),
       );
-    } else if (state is ChatEmpty) {
+    } else if (state is CubitChatLoadEmpty) {
       return const Center(child: Text("No Data Available"));
-    } else if (state is ChatError) {
+    } else if (state is CubitChatLoadError) {
       return Center(child: Text('No Data'));
     }
     return const SizedBox();

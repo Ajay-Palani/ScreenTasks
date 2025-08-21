@@ -31,9 +31,6 @@ class CubitChatLoadError extends CubitChatState{
 class CubitChatBloc extends Bloc<CubitChatEvent, CubitChatState>{
   CubitChatBloc():super(InitialState());
 
-  Stream<CubitChatState> loadChat(CubitChatEvent event) async*{
-    yield CubitLoadingChatState();
-  }
 
   @override
   Stream<CubitChatState> mapEventToState(CubitChatEvent event) async*{

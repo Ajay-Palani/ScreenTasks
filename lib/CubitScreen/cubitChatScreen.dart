@@ -12,7 +12,7 @@ class Cubitchatscreen extends StatefulWidget {
 }
 
 class _CubitchatscreenState extends State<Cubitchatscreen> {
-  List<dynamic> users=[];
+  List<dynamic> users = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +20,12 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
       create: (context) => CubitChatBloc(),
       child: DefaultTabController(
         length: 4,
-        child: BlocBuilder<CubitChatBloc, CubitChatState>(
-          builder: (context, state) {
+        child: Builder(
+          builder: (context) {
             final tabControl = DefaultTabController.of(context);
 
             tabControl.addListener(() {
-              if (tabControl.index == 1 && !tabControl.indexIsChanging) {
+              if (tabControl.index == 1 && tabControl.indexIsChanging) {
                 context.read<CubitChatBloc>().add(LoadCubitChatEvent());
               }
             });
@@ -51,7 +51,7 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                   PopupMenuButton(
                     iconColor: Colors.white,
                     itemBuilder: (context) {
-                      return [
+                      return  [
                         PopupMenuItem(child: Text('New Community')),
                         PopupMenuItem(child: Text('New Broadcast')),
                         PopupMenuItem(child: Text('Linked Device')),
@@ -63,14 +63,28 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                     },
                   ),
                 ],
-                bottom:  TabBar(
+                bottom: TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: Colors.white,
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
-                  tabs: [Tab(icon: Icon(Icons.groups, color: Colors.white)), SizedBox(width: 80, child: Tab(child: Text('Chats', style: TextStyle(color: Colors.white)))),
-                    SizedBox(width: 80, child: Tab(child: Text('Status', style: TextStyle(color: Colors.white)))),
-                    SizedBox(width: 80, child: Tab(child: Text('Calls', style: TextStyle(color: Colors.white)))),
+                  tabs: [
+                    Tab(icon: Icon(Icons.groups, color: Colors.white)),
+                    SizedBox(
+                        width: 80,
+                        child: Tab(
+                            child: Text('Chats',
+                                style: TextStyle(color: Colors.white)))),
+                    SizedBox(
+                        width: 80,
+                        child: Tab(
+                            child: Text('Status',
+                                style: TextStyle(color: Colors.white)))),
+                    SizedBox(
+                        width: 80,
+                        child: Tab(
+                            child: Text('Calls',
+                                style: TextStyle(color: Colors.white)))),
                   ],
                 ),
               ),
@@ -83,8 +97,7 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                         title: Text(
                           state.error,
                           style:  TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                              color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                         actions: [
                           OutlinedButton(
@@ -95,15 +108,18 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                     );
                   }
                 },
-                child: BlocBuilder<CubitChatBloc, CubitChatState>(
-                  builder: (context, state) {
-                    return TabBarView(
-                      children: [ Center(child: Text("Community")), getChats(state),
-                        Center(child: Text("Status")),
-                        Center(child: Text("Calls")),
-                      ],
-                    );
-                  },
+                child: TabBarView(
+                  children: [
+                     Center(child: Text("Community")),
+                    // 👇 BlocBuilder only for Chats tab
+                    BlocBuilder<CubitChatBloc, CubitChatState>(
+                      builder: (context, state) {
+                        return getChats(state);
+                      },
+                    ),
+                     Center(child: Text("Status")),
+                     Center(child: Text("Calls")),
+                  ],
                 ),
               ),
             );
@@ -117,11 +133,11 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
     if (state is CubitLoadingChatState) {
       return ListView.builder(
         itemCount: 6,
-        itemBuilder: (context, index) =>  Shimmer.fromColors(
+        itemBuilder: (context, index) => Shimmer.fromColors(
           baseColor: Colors.grey,
           highlightColor: Colors.grey[300]!,
-          child:  Padding(
-            padding: const EdgeInsets.all(8.0),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
             child: ListTile(
               leading: CircleAvatar(radius: 25, backgroundColor: Colors.white),
               tileColor: Colors.black12,
@@ -142,19 +158,26 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
               backgroundImage: NetworkImage("${users[index]['avatar']}"),
               radius: 30,
             ),
-            title: Text("${users[index]['first_name']} ${users[index]['last_name']}", style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            title: Text(
+              "${users[index]['first_name']} ${users[index]['last_name']}",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            subtitle: Text("${users[index]['email']}", style:  TextStyle(fontSize: 16, color: Colors.black54),
-            ), trailing:  Text("7:30", style: TextStyle(fontSize: 12, color: Colors.black54),
-          ),
+            subtitle: Text(
+              "${users[index]['email']}",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            trailing: Text(
+              "7:30",
+              style: TextStyle(fontSize: 12, color: Colors.black54),
+            ),
           ),
         ),
       );
     } else if (state is CubitChatLoadEmpty) {
-      return const Center(child: Text("No Data Available"));
+      return Center(child: Text("No Data Available"));
     } else if (state is CubitChatLoadError) {
       return Center(child: Text('No Data'));
     }
-    return const SizedBox();
+    return SizedBox();
   }
 }

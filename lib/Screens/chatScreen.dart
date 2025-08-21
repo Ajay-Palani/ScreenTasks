@@ -20,7 +20,7 @@ class _ChatscreenState extends State<Chatscreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ChatBloc(),
+      create: (context) =>  ChatBloc(),
       child: DefaultTabController(
         length: 4,
         child: BlocBuilder<ChatBloc, ChatState>(
@@ -28,7 +28,7 @@ class _ChatscreenState extends State<Chatscreen> {
             final tabControl = DefaultTabController.of(context);
 
             tabControl.addListener(() {
-              if (tabControl.index == 1 && !tabControl.indexIsChanging) {
+              if (tabControl.index == 1 && tabControl.indexIsChanging) {
                 context.read<ChatBloc>().add(LoadChatEvent());
               }
             });
@@ -98,15 +98,14 @@ class _ChatscreenState extends State<Chatscreen> {
                     );
                   }
                 },
-                child: BlocBuilder<ChatBloc, ChatState>(
-                  builder: (context, state) {
-                    return TabBarView(
-                      children: [ Center(child: Text("Community")), getChats(state),
-                         Center(child: Text("Status")),
-                         Center(child: Text("Calls")),
-                      ],
-                    );
-                  },
+                child: TabBarView(
+                  children: [ Center(child: Text("Community")),
+                    BlocBuilder<ChatBloc,ChatState>(builder: (context, state) {
+                      return getChats(state);
+                    },),
+                     Center(child: Text("Status")),
+                     Center(child: Text("Calls")),
+                  ],
                 ),
               ),
             );
@@ -158,10 +157,10 @@ class _ChatscreenState extends State<Chatscreen> {
         ),
       );
     } else if (state is ChatEmpty) {
-      return const Center(child: Text("No Data Available"));
+      return  Center(child: Text("No Data Available"));
     } else if (state is ChatError) {
       return Center(child: Text('No Data'));
     }
-    return const SizedBox();
+    return SizedBox();
   }
 }

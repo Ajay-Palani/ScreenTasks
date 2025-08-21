@@ -200,6 +200,7 @@ class _IndividualchatState extends State<Individualchat> {
 
                   ),
                 ),
+
                 (isMessageEnter==true)? Icon(Icons.send): Icon(Icons.mic)
 
               ],

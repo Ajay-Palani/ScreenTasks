@@ -14,14 +14,17 @@ class Chatscreen extends StatefulWidget {
 }
 
 class _ChatscreenState extends State<Chatscreen> {
+
+  List<dynamic> users=[];
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ChatBloc(),
       child: DefaultTabController(
         length: 4,
-        child: Builder(
-          builder: (context) {
+        child: BlocBuilder<ChatBloc, ChatState>(
+          builder: (context, state) {
             final tabControl = DefaultTabController.of(context);
 
             tabControl.addListener(() {
@@ -32,15 +35,15 @@ class _ChatscreenState extends State<Chatscreen> {
 
             return Scaffold(
               appBar: AppBar(
-                backgroundColor: const Color.fromARGB(237, 7, 94, 80),
-                title: const Text(
+                backgroundColor:  Color.fromARGB(237, 7, 94, 80),
+                title:  Text(
                   'WhatsApp',
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.w600),
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.camera_alt),
+                    icon:  Icon(Icons.camera_alt),
                     color: Colors.white,
                     onPressed: () {
                       ImagePicker().pickImage(source: ImageSource.camera);
@@ -63,28 +66,14 @@ class _ChatscreenState extends State<Chatscreen> {
                     },
                   ),
                 ],
-                bottom: const TabBar(
+                bottom:  TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: Colors.white,
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
-                  tabs: [
-                    Tab(icon: Icon(Icons.groups, color: Colors.white)),
-                    SizedBox(
-                        width: 80,
-                        child: Tab(
-                            child: Text('Chats',
-                                style: TextStyle(color: Colors.white)))),
-                    SizedBox(
-                        width: 80,
-                        child: Tab(
-                            child: Text('Status',
-                                style: TextStyle(color: Colors.white)))),
-                    SizedBox(
-                        width: 80,
-                        child: Tab(
-                            child: Text('Calls',
-                                style: TextStyle(color: Colors.white)))),
+                  tabs: [Tab(icon: Icon(Icons.groups, color: Colors.white)), SizedBox(width: 80, child: Tab(child: Text('Chats', style: TextStyle(color: Colors.white)))),
+                    SizedBox(width: 80, child: Tab(child: Text('Status', style: TextStyle(color: Colors.white)))),
+                    SizedBox(width: 80, child: Tab(child: Text('Calls', style: TextStyle(color: Colors.white)))),
                   ],
                 ),
               ),
@@ -96,14 +85,14 @@ class _ChatscreenState extends State<Chatscreen> {
                       builder: (context) => AlertDialog(
                         title: Text(
                           state.error,
-                          style: const TextStyle(
+                          style:  TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         actions: [
                           OutlinedButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text("Ok"))
+                              child:  Text("Ok"))
                         ],
                       ),
                     );
@@ -112,11 +101,9 @@ class _ChatscreenState extends State<Chatscreen> {
                 child: BlocBuilder<ChatBloc, ChatState>(
                   builder: (context, state) {
                     return TabBarView(
-                      children: [
-                        const Center(child: Text("Community")),
-                        getChats(state),
-                        const Center(child: Text("Status")),
-                        const Center(child: Text("Calls")),
+                      children: [ Center(child: Text("Community")), getChats(state),
+                         Center(child: Text("Status")),
+                         Center(child: Text("Calls")),
                       ],
                     );
                   },
@@ -132,29 +119,21 @@ class _ChatscreenState extends State<Chatscreen> {
   Widget getChats(ChatState state) {
     if (state is LoadedChats) {
       return ListView.builder(
-
+        itemCount: 6,
         itemBuilder: (context, index) =>  Shimmer.fromColors(
           baseColor: Colors.grey,
           highlightColor: Colors.grey[300]!,
-          child: const ListTile(
-            leading: CircleAvatar(radius: 25, backgroundColor: Colors.white),
-            title: SizedBox(
-              height: 15,
-              child: DecoratedBox(
-                decoration: BoxDecoration(color: Colors.white),
-              ),
-            ),
-            subtitle: SizedBox(
-              height: 12,
-              child: DecoratedBox(
-                decoration: BoxDecoration(color: Colors.white),
-              ),
+          child:  Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListTile(
+              leading: CircleAvatar(radius: 25, backgroundColor: Colors.white),
+              tileColor: Colors.black12,
             ),
           ),
         ),
       );
     } else if (state is ChatSuccess) {
-      final users = state.users;
+       users = state.users;
       return ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) => InkWell(
@@ -172,14 +151,14 @@ class _ChatscreenState extends State<Chatscreen> {
             ),
             title: Text(
               "${users[index]['first_name']} ${users[index]['last_name']}",
-              style: const TextStyle(
+              style:  TextStyle(
                   fontWeight: FontWeight.bold, fontSize: 18),
             ),
             subtitle: Text(
               "${users[index]['email']}",
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
+              style:  TextStyle(fontSize: 16, color: Colors.black54),
             ),
-            trailing: const Text(
+            trailing:  Text(
               "7:30",
               style: TextStyle(fontSize: 12, color: Colors.black54),
             ),

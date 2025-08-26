@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "393377573880",
+    "project_id": "signup-fbdb5",
+    "storage_bucket": "signup-fbdb5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393377573880:android:e90f0cf2c6b40232b8840d",
+        "android_client_info": {
+          "package_name": "com.example.task5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_ovmJ0EZbhyRwJKMR4_Yih0cvfOR6U4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

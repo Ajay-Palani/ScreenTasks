@@ -12,7 +12,10 @@ class SendMessageEvent extends MessageEvent{
   String message;
   SendMessageEvent(this.message);
 }
-class ReceiveMessageEvent extends MessageEvent{}
+class ReceiveMessageEvent extends MessageEvent{
+  String message;
+  ReceiveMessageEvent(this.message);
+}
 
 class MessageState extends Equatable{
 

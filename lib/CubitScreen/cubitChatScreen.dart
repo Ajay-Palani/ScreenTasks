@@ -32,15 +32,15 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
 
             return Scaffold(
               appBar: AppBar(
-                backgroundColor:  Color.fromARGB(237, 7, 94, 80),
-                title:  Text(
+                backgroundColor: Color.fromARGB(237, 7, 94, 80),
+                title: Text(
                   'WhatsApp',
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.w600),
                 ),
                 actions: [
                   IconButton(
-                    icon:  Icon(Icons.camera_alt),
+                    icon: Icon(Icons.camera_alt),
                     color: Colors.white,
                     onPressed: () {
                       ImagePicker().pickImage(source: ImageSource.camera);
@@ -51,7 +51,7 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                   PopupMenuButton(
                     iconColor: Colors.white,
                     itemBuilder: (context) {
-                      return  [
+                      return [
                         PopupMenuItem(child: Text('New Community')),
                         PopupMenuItem(child: Text('New Broadcast')),
                         PopupMenuItem(child: Text('Linked Device')),
@@ -96,13 +96,13 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                       builder: (context) => AlertDialog(
                         title: Text(
                           state.error,
-                          style:  TextStyle(
+                          style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                         actions: [
                           OutlinedButton(
                               onPressed: () => Navigator.pop(context),
-                              child:  Text("Ok"))
+                              child: Text("Ok"))
                         ],
                       ),
                     );
@@ -110,15 +110,15 @@ class _CubitchatscreenState extends State<Cubitchatscreen> {
                 },
                 child: TabBarView(
                   children: [
-                     Center(child: Text("Community")),
+                    Center(child: Text("Community")),
                     // 👇 BlocBuilder only for Chats tab
                     BlocBuilder<CubitChatBloc, CubitChatState>(
                       builder: (context, state) {
                         return getChats(state);
                       },
                     ),
-                     Center(child: Text("Status")),
-                     Center(child: Text("Calls")),
+                    Center(child: Text("Status")),
+                    Center(child: Text("Calls")),
                   ],
                 ),
               ),

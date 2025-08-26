@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task5/Api/apiMethods.dart';
 
 class ChatEvent extends Equatable{
+
   @override
   // TODO: implement props
   List<Object?> get props => [];

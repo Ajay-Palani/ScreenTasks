@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:ivf/Utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:ivf/Api/api_methods.dart';
 import 'package:ivf/Utils/app_colors.dart';
@@ -29,7 +29,6 @@ class _WelcomepageState extends State<Welcomepage> {
             ));
       },
     );
-
   }
 
   @override
@@ -41,7 +40,7 @@ class _WelcomepageState extends State<Welcomepage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding:  EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(10.0),
             child: Container(
               width: 100,
               height: 100,
@@ -52,18 +51,14 @@ class _WelcomepageState extends State<Welcomepage> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
-          Padding(
-            padding:  EdgeInsets.all(10.0),
-            child: Text(
-              'PRASHANTH FERTILITY CARE',
-              style: TextStyle(
-                  color: AppColors.purple,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            ),
-          )
+          CommonPack().regularText(
+                  text: 'PRASHANTH FERTILITY CARE',
+                  fontWeight: FontWeight.w700,
+                  fontfamily: 'Outfit-Bold',
+                  color: AppColors.splashColor,
+                  fontsize: 20)
         ],
       )),
     );

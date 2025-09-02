@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ivf/Bloc/dashboard_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:ivf/Utils/common.dart';
 
 class Dashboard extends StatefulWidget {
   final String token;
@@ -126,7 +127,9 @@ class _DashboardState extends State<Dashboard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: dates.map((date) {
-                        final isSelected = selectedDate != null && DateFormat('yyyy-MM-dd').format(selectedDate!) == DateFormat('yyyy-MM-dd').format(date);
+                        final isSelected = selectedDate != null &&
+                            DateFormat('yyyy-MM-dd').format(selectedDate!) ==
+                                DateFormat('yyyy-MM-dd').format(date);
                         return ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isSelected
@@ -227,7 +230,18 @@ class _DashboardState extends State<Dashboard> {
       padding: EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(title), Text(value)],
+        children: [
+          CommonPack().regularText(
+              text: title,
+              fontWeight: FontWeight.w500,
+              fontsize: 20,
+              color: AppColors.headText),
+          CommonPack().regularText(
+              text: value,
+              fontWeight: FontWeight.w500,
+              fontsize: 20,
+              color: AppColors.headText),
+        ],
       ),
     );
   }

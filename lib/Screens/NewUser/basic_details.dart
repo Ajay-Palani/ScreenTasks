@@ -5,6 +5,7 @@ import 'package:ivf/Screens/Dashboard/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ivf/Bloc/login_bloc.dart';
+import 'package:ivf/Utils/common.dart';
 
 class NewUser extends StatefulWidget {
   NewUser({super.key});
@@ -37,16 +38,14 @@ class NewUserState extends State<NewUser> {
           return Scaffold(
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(
-              backgroundColor: AppColors.bgColor,
-              centerTitle: true,
-              title: Text(
-                'Basic Details',
-                style: TextStyle(
-                    fontSize: 20,
+                backgroundColor: AppColors.bgColor,
+                centerTitle: true,
+                title: CommonPack().regularText(
+                    text: 'Basic Details',
+                    color: AppColors.black,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black),
-              ),
-            ),
+                    letterSpacing: 0.5,
+                    fontsize: 20)),
             body: SingleChildScrollView(
               child: Form(
                 key: formKey,
@@ -59,178 +58,225 @@ class NewUserState extends State<NewUser> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10),
-                          Text(
-                            'Enter your basic details to register.',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.purple),
-                          ),
+                          CommonPack().regularText(
+                              text: 'Enter your basic details to register.',
+                              color: AppColors.purple,
+                              fontsize: 20,
+                              fontWeight: FontWeight.w500),
                           SizedBox(height: 30),
-                          Text('First Name',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400)),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: CommonPack().regularText(
+                                text: 'First Name',
+                                fontsize: 20,
+                                fontWeight: FontWeight.w400),
+                          ),
                           SizedBox(height: 5),
-                      TextFormField(
-                              controller: fnameController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) =>
-                                  (value == null || value.isEmpty)
-                                      ? 'Please enter first name'
-                                      : null,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                hintText: 'xxxxxxx',
-                                fillColor: AppColors.textColor,
-                                filled: true,
-                                border: OutlineInputBorder(),
-                              ),
+                          TextFormField(
+                            controller: fnameController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) =>
+                                (value == null || value.isEmpty)
+                                    ? 'Please enter first name'
+                                    : null,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              hintText: 'XXXXXXX',
+                              hintStyle: TextStyle(
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontFamily: 'Outfit',
+                                  fontSize: 14),
+                              fillColor: AppColors.textColor,
+                              filled: true,
+                              border: OutlineInputBorder(),
                             ),
-                          SizedBox(height: 25),
-                          Text('Last Name',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400)),
+                          ),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: CommonPack().regularText(
+                                text: 'Last Name',
+                                fontsize: 20,
+                                fontWeight: FontWeight.w400),
+                          ),
                           SizedBox(height: 5),
-                      TextFormField(
-                              controller: lnameController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) =>
-                                  (value == null || value.isEmpty)
-                                      ? 'Please enter last name'
-                                      : null,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                hintText: 'xxxxxxx',
-                                fillColor: AppColors.textColor,
-                                filled: true,
-                                border: OutlineInputBorder(),
-                              ),
+                          TextFormField(
+                            controller: lnameController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) =>
+                                (value == null || value.isEmpty)
+                                    ? 'Please enter last name'
+                                    : null,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              hintText: 'XXXXXXX',
+                              hintStyle: TextStyle(
+                                fontFamily: 'Outfit',
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14),
+                              fillColor: AppColors.textColor,
+                              filled: true,
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
                             ),
-                          SizedBox(height: 25),
-                          Text('Date of Birth',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400)),
+                          ),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: CommonPack().regularText(
+                                text: 'Date of Birth',
+                                fontsize: 20,
+                                fontWeight: FontWeight.w400),
+                          ),
                           SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              buildDropdown(31, 'xx', selectedDay, (value) {
+                              buildDropdown(31, 'XX', selectedDay, (value) {
                                 setState(() {
                                   selectedDay = value;
                                 });
                               }),
-                              buildDropdown(12, 'xx', selectedMonth, (value) {
+                              buildDropdown(12, 'XX', selectedMonth, (value) {
                                 setState(() {
                                   selectedMonth = value;
                                 });
                               }),
-                              buildDropdown(106, 'xxxx', selectedYear, (value) {
+                              buildDropdown(106, 'XXXX', selectedYear, (value) {
                                 setState(() {
                                   selectedYear = value;
                                 });
                               }, start: 1920),
                             ],
                           ),
-                          SizedBox(height: 25),
-                          Text('Email',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400)),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: CommonPack().regularText(
+                                text: 'Email',
+                                fontsize: 20,
+                                fontWeight: FontWeight.w400),
+                          ),
                           SizedBox(height: 5),
-                 TextFormField(
-                              controller: emailController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value == null || value.isEmpty)
-                                  return 'Please enter email';
-                                String pattern =
-                                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-                                if (!RegExp(pattern).hasMatch(value))
-                                  return 'Enter a valid email address';
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                isDense: true,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                hintText: 'xxxxxxxxxxxxx',
-                                fillColor: AppColors.textColor,
-                                filled: true,
-                                border: OutlineInputBorder(),
-                              ),
+                          TextFormField(
+                            controller: emailController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Please enter email';
+                              String pattern =
+                                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                              if (!RegExp(pattern).hasMatch(value))
+                                return 'Enter a valid email address';
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              isDense: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              hintText: 'XXXXXXX',
+                              hintStyle: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14),
+                              fillColor: AppColors.textColor,
+                              filled: true,
+                              border: OutlineInputBorder(),
                             ),
-                          SizedBox(height: 25),
-                          Text('Country',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400)),
+                          ),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: CommonPack().regularText(
+                                text: 'Country',
+                                fontsize: 20,
+                                fontWeight: FontWeight.w400),
+                          ),
                           SizedBox(height: 5),
-                  TextFormField(
-                              controller: countryController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) =>
-                                  (value == null || value.isEmpty)
-                                      ? 'Please enter country'
-                                      : null,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                hintText: 'xxxxxxx',
-                                fillColor: AppColors.textColor,
-                                filled: true,
-                                border: OutlineInputBorder(),
-                              ),
+                          TextFormField(
+                            controller: countryController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) =>
+                                (value == null || value.isEmpty)
+                                    ? 'Please enter country'
+                                    : null,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              hintText: 'XXXXXXX',
+                              hintStyle: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14),
+                              fillColor: AppColors.textColor,
+                              filled: true,
+                              border: OutlineInputBorder(),
                             ),
-                          SizedBox(height: 25),
-                          Text('City',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400)),
+                          ),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: CommonPack().regularText(
+                                text: 'City',
+                                fontsize: 20,
+                                fontWeight: FontWeight.w400),
+                          ),
                           SizedBox(height: 5),
-                            TextFormField(
-                              controller: cityController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) =>
-                                  (value == null || value.isEmpty)
-                                      ? 'Please enter city'
-                                      : null,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.borderColor)),
-                                hintText: 'xxxxxxx',
-                                fillColor: AppColors.textColor,
-                                filled: true,
-                                border: OutlineInputBorder(),
-                              ),
+                          TextFormField(
+                            controller: cityController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) =>
+                                (value == null || value.isEmpty)
+                                    ? 'Please enter city'
+                                    : null,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: AppColors.borderColor)),
+                              hintText: 'XXXXXXX',
+                              hintStyle: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14),
+                              fillColor: AppColors.textColor,
+                              filled: true,
+                              border: OutlineInputBorder(),
                             ),
+                          ),
                           SizedBox(height: 20),
                           Align(
                             alignment: Alignment.bottomRight,
@@ -299,7 +345,11 @@ class NewUserState extends State<NewUser> {
           alignment: Alignment.centerRight,
           hint: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text(hint)]),
+              children: [Text(hint, style: TextStyle(
+              fontFamily: 'Outfit',
+              color: AppColors.black,
+              fontWeight: FontWeight.w300,
+              fontSize: 14),)]),
           items: List.generate(count, (index) {
             final value = (start + index).toString();
             return DropdownMenuItem(value: value, child: Text(value));
@@ -341,8 +391,8 @@ class NewUserState extends State<NewUser> {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => Dashboard(token)));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("No Token")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("No Token")));
         }
       } catch (e) {
         ScaffoldMessenger.of(context)

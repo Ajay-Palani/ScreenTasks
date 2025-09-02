@@ -8,4 +8,7 @@ class AppColors{
   static const Color textColor=Color(0xFFF8F3EF);
   static const Color buttonColor= Color(0xFFF1738A);
   static const Color borderColor= Color(0xFFD9D9D9);
+  static const Color headText= Color(0xFF000001);
+  static const Color splashColor= Color(0xFF211D70);
+
 }

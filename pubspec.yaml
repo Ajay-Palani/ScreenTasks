@@ -98,3 +98,17 @@ flutter:
   assets:
     - assets/images/
 
+  fonts:
+    - family: outfit
+      fonts:
+        - asset: fonts/outfit/Outfit-Black.ttf
+        - asset: fonts/outfit/Outfit-Bold.ttf
+        - asset: fonts/outfit/Outfit-ExtraBold.ttf
+        - asset: fonts/outfit/Outfit-Regular.ttf
+        - asset: fonts/outfit/Outfit-ExtraLight.ttf
+        - asset: fonts/outfit/Outfit-Light.ttf
+        - asset: fonts/outfit/Outfit-Medium.ttf
+        - asset: fonts/outfit/Outfit-SemiBold.ttf
+        - asset: fonts/outfit/Outfit-Thin.ttf
+        - asset: fonts/outfit/Outfit-VariableFont_wght.ttf
+

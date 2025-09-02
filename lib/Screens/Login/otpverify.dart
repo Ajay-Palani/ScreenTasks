@@ -8,6 +8,7 @@ import 'package:ivf/Utils/app_colors.dart';
 import 'package:pinput/pinput.dart';
 import 'package:ivf/Screens/NewUser/basic_details.dart';
 import 'package:ivf/Screens/Dashboard/dashboard.dart';
+import 'package:ivf/Utils/common.dart';
 
 class OtpVerifyWrapper extends StatelessWidget {
   final TextEditingController phone;
@@ -18,7 +19,7 @@ class OtpVerifyWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-      LoginBloc()..add(SendOtpEvent(int.parse(phone.text))),
+          LoginBloc()..add(SendOtpEvent(int.parse(phone.text))),
       child: OtpVerify(phone),
     );
   }
@@ -86,13 +87,13 @@ class _OtpVerifyState extends State<OtpVerify> {
     double height = MediaQuery.of(context).size.height;
 
     final defaultPinTheme = PinTheme(
-      width: 55,
-      height: 55,
-      textStyle:  TextStyle(
-          fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal),
+      width: 50,
+      height: 50,
+      textStyle: TextStyle(
+          fontSize: 20, color: AppColors.black, fontWeight: FontWeight.normal),
       decoration: BoxDecoration(
         color: AppColors.textColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(5),
         border: Border.all(color: AppColors.borderColor),
       ),
     );
@@ -115,7 +116,8 @@ class _OtpVerifyState extends State<OtpVerify> {
             );
           }
         } else if (state is OtpVerifyError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
@@ -147,91 +149,88 @@ class _OtpVerifyState extends State<OtpVerify> {
                           ),
                         ),
                         Positioned(
-                          top:225,
+                          top: 225,
                           child: Container(
                             width: width,
                             height: height * 0.75,
                             decoration: BoxDecoration(
                               color: AppColors.bgColor,
-                              borderRadius:  BorderRadius.only(
+                              borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(20),
                                 topLeft: Radius.circular(20),
                               ),
                             ),
                             child: SingleChildScrollView(
-                              padding:  EdgeInsets.all(16),
+                              padding: EdgeInsets.all(16),
                               child: Padding(
-                                padding:  EdgeInsets.all(10.0),
+                                padding: EdgeInsets.all(10.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                     SizedBox(height: 5),
+                                    SizedBox(height: 5),
                                     Align(
-                                      child: Text(
-                                        'LOGIN',
-                                        style: TextStyle(
-                                          color: AppColors.purple,
+                                      child: CommonPack().regularText(
+                                          text: 'LOGIN',
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 24,
-                                        ),
-                                      ),
+                                          fontsize: 24,
+                                          color: AppColors.purple),
                                     ),
-                                     SizedBox(height: 25),
-                                     Padding(
+                                    SizedBox(height: 25),
+                                    Padding(
                                       padding: EdgeInsets.all(4.0),
-                                      child: Text(
-                                        'Mobile Number',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20,
+                                      child: CommonPack().regularText(
+                                          text: 'Mobile Number',
+                                          color: AppColors.black,
+                                          fontsize: 20,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(height: 5,),
+                                    SizedBox(
+                                      height: 50,
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        controller: widget.phone,
+                                        decoration: InputDecoration(
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppColors.borderColor),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppColors.borderColor),
+                                          ),
+                                          filled: true,
+                                          fillColor: AppColors.textColor,
+                                          prefix: Text('+91'),
+                                          hintText: 'xxxxxxxxxx',
+                                          border:
+                                              OutlineInputBorder(gapPadding: 1),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: CommonPack().regularText(
+                                          text: 'Enter OTP',
                                           fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 50,child: TextFormField(
-                                      readOnly: true,
-                                      controller: widget.phone,
-                                      decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColors.borderColor),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColors.borderColor),
-                                        ),
-                                        filled: true,
-                                        fillColor: AppColors.textColor,
-                                        prefix: Text('+91'),
-                                        hintText: 'xxxxxxxxxx',
-                                        border:
-                                         OutlineInputBorder(gapPadding: 1),
-                                      ),
-                                    ),),
-                                     SizedBox(height: 20),
-                                     Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Enter OTP',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
+                                          fontsize: 20,
+                                          color: AppColors.black,
+                                        )),
+                                    SizedBox(height: 20),
                                     Pinput(
                                       length: 6,
-                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                       controller: otpController,
                                       defaultPinTheme: defaultPinTheme,
-                                      focusedPinTheme:
-                                      defaultPinTheme.copyWith(
+                                      focusedPinTheme: defaultPinTheme.copyWith(
                                         decoration: defaultPinTheme.decoration!
                                             .copyWith(
                                           border: Border.all(
                                               color: AppColors.buttonColor,
-                                              width: 2),
+                                              width: 1),
                                         ),
                                       ),
                                     ),
@@ -242,20 +241,18 @@ class _OtpVerifyState extends State<OtpVerify> {
                                       height: height * 0.06,
                                       width: width,
                                       child: MaterialButton(
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                        onPressed: () =>
-                                            _verifyOtpWithBloc(context),
-                                        color: AppColors.buttonColor,
-                                        padding: EdgeInsets.all(10),
-                                        child: Text(
-                                          'Verify',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          onPressed: () =>
+                                              _verifyOtpWithBloc(context),
+                                          color: AppColors.buttonColor,
+                                          padding: EdgeInsets.all(10),
+                                          child: CommonPack().regularText(
+                                              text: 'Verify',
+                                              color: AppColors.white,
+                                              fontsize: 20,
+                                              fontWeight: FontWeight.w600)),
                                     )
                                   ],
                                 ),
@@ -279,42 +276,33 @@ class _OtpVerifyState extends State<OtpVerify> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          "Didn't get it? ",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w300,
-          ),
-        ),
+        CommonPack().regularText(
+            text: "Didn't get it? ",
+            color: AppColors.black,
+            fontsize: 14,
+            fontWeight: FontWeight.w300),
         if (!isResendEnabled)
-          Text(
-            'Resend by $otpTime sec',
-            style: TextStyle(
+          CommonPack().regularText(
+              text: 'Resend by ${otpTime} sec',
+              fontsize: 14,
               fontWeight: FontWeight.w500,
-              fontSize: 14,
-              color: AppColors.buttonColor,
-            ),
-          )
+              color: AppColors.buttonColor)
         else
           TextButton(
-            onPressed: () {
-              startTimer(duration: 30);
-            },
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.all(0),
-              minimumSize: Size(0, 0),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              'Resend OTP',
-              style: TextStyle(
+              onPressed: () {
+                startTimer(duration: 30);
+              },
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.all(0),
+                minimumSize: Size(0, 0),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: CommonPack().regularText(
+                text: 'Resend OTP',
                 color: AppColors.buttonColor,
                 fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ),
+                fontsize: 14,
+              )),
       ],
     );
   }

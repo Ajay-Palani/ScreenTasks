@@ -111,7 +111,7 @@ class _LoginState extends State<Login> {
                                         focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: AppColors.borderColor)),
-                                        prefix: CommonPack().regularText(text: '+91 ',fontsize: 18, fontfamily: 'Outfit',fontWeight: FontWeight.w300, color: AppColors.black),
+                                        prefix: CommonPack().regularText(text: '+91 ',fontsize: 16, fontfamily: 'Outfit',fontWeight: FontWeight.w300, color: AppColors.black),
                                         hintText: 'xxxxxxxxxxxxxxxxx',
                                         hintStyle: TextStyle(fontWeight: FontWeight.w300, fontSize: 14, fontFamily: 'Outfit', color: AppColors.black),
                                         border: OutlineInputBorder(

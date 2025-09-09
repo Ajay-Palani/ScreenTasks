@@ -1,29 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ivf/Bloc/login_bloc.dart';
-import 'package:ivf/Utils/app_colors.dart';
 import 'package:pinput/pinput.dart';
-import 'package:ivf/Screens/NewUser/basic_details.dart';
-import 'package:ivf/Screens/Dashboard/dashboard.dart';
+import 'package:ivf/Utils/app_colors.dart';
 import 'package:ivf/Utils/common.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ivf/Repositary/app_repo.dart';
+import 'package:ivf/Bloc/login_bloc.dart';
+import 'package:ivf/Screens/NewUser/basic_details.dart';
+import 'package:ivf/Utils/app_alert_controller.dart';
+import 'package:ivf/Repositary/api_token.dart';
+import 'package:ivf/Screens/Dashboard/dashboard.dart';
 
-class OtpVerifyWrapper extends StatelessWidget {
-  final TextEditingController phone;
-
-  const OtpVerifyWrapper(this.phone, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          LoginBloc()..add(SendOtpEvent(int.parse(phone.text))),
-      child: OtpVerify(phone),
-    );
-  }
-}
 
 class OtpVerify extends StatefulWidget {
   final TextEditingController phone;
@@ -31,11 +19,15 @@ class OtpVerify extends StatefulWidget {
   const OtpVerify(this.phone, {super.key});
 
   @override
-  State<OtpVerify> createState() => _OtpVerifyState();
+  State<OtpVerify> createState() => _OtpVerifyState(this.phone);
 }
 
 class _OtpVerifyState extends State<OtpVerify> {
+  final TextEditingController phone;
+
+  _OtpVerifyState(this.phone);
   final TextEditingController otpController = TextEditingController();
+  final formkey= GlobalKey<FormState>();
   Timer? timer;
   int otpTime = 30;
   bool isResendEnabled = false;
@@ -54,7 +46,7 @@ class _OtpVerifyState extends State<OtpVerify> {
       isResendEnabled = false;
     });
 
-    timer = Timer.periodic(Duration(seconds: 1), (t) {
+    timer = Timer.periodic(Duration(seconds: 1), (timing) {
       if (otpTime > 0) {
         setState(() {
           otpTime--;
@@ -68,17 +60,11 @@ class _OtpVerifyState extends State<OtpVerify> {
     });
   }
 
-  void _verifyOtpWithBloc(BuildContext context) {
-    if (otpController.text.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Please enter OTP")));
-      return;
-    }
 
-    final int phone = int.parse(widget.phone.text);
-    final int otp = int.parse(otpController.text);
-
-    BlocProvider.of<LoginBloc>(context).add(VerifyOtpEvent(phone, otp));
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
   }
 
   @override
@@ -86,53 +72,41 @@ class _OtpVerifyState extends State<OtpVerify> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    final defaultPinTheme = PinTheme(
-      width: 50,
-      height: 50,
-      textStyle: TextStyle(
-          fontSize: 20, color: AppColors.black, fontWeight: FontWeight.normal),
-      decoration: BoxDecoration(
-        color: AppColors.textColor,
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: AppColors.borderColor),
-      ),
-    );
+    return BlocProvider(
+      create: (context) => LoginBloc(),
+      child: BlocListener<LoginBloc, LoginState>(
+        listener: (context, state) {
+          if(state is VerifyOtpSuccessState){
+            setToken(state.data['session']['token']);
+            setId(state.data['data']['user']['_id']);
+            bool newUser= state.data['data']['user']['isNewUser'];
+            if(newUser){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NewUser(),));
+            }
+            else{
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+            }
 
-    return BlocListener<LoginBloc, LoginState>(
-      listener: (context, state) {
-        if (state is StartTimerState) {
-          startTimer(duration: 30);
-        } else if (state is OtpVerifySuccess) {
-          // Navigate after verification
-          if (state.isNewUser) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => NewUser()),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Dashboard(state.token)),
-            );
           }
-        } else if (state is OtpVerifyError) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.error)));
-        }
-      },
-      child: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, state) {
-          if (state is LoadingState) {
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(color: Colors.black),
-              ),
-            );
-          }
+        },
+        child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+          final defaultPinTheme = PinTheme(
+            width: 50,
+            height: 50,
+            textStyle: TextStyle(
+                fontSize: 20, color: AppColors.black, fontWeight: FontWeight.normal),
+            decoration: BoxDecoration(
+              color: AppColors.textColor,
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: AppColors.borderColor),
+            ),
+          );
 
           return Scaffold(
             backgroundColor: AppColors.bgColor,
-            body: SizedBox(
+            body: Form(
+              key: formkey,
+              child: SizedBox(
               width: width,
               height: height,
               child: Column(
@@ -184,12 +158,12 @@ class _OtpVerifyState extends State<OtpVerify> {
                                           fontsize: 20,
                                           fontWeight: FontWeight.w400),
                                     ),
-                                    SizedBox(height: 5,),
+                                    SizedBox(height: 5),
                                     SizedBox(
                                       height: 50,
                                       child: TextFormField(
                                         readOnly: true,
-                                        controller: widget.phone,
+                                        controller: phone,
                                         decoration: InputDecoration(
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -203,8 +177,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                                           fillColor: AppColors.textColor,
                                           prefix: Text('+91'),
                                           hintText: 'xxxxxxxxxx',
-                                          border:
-                                              OutlineInputBorder(gapPadding: 1),
+                                          border: OutlineInputBorder(gapPadding: 1),
                                         ),
                                       ),
                                     ),
@@ -226,11 +199,10 @@ class _OtpVerifyState extends State<OtpVerify> {
                                       controller: otpController,
                                       defaultPinTheme: defaultPinTheme,
                                       focusedPinTheme: defaultPinTheme.copyWith(
-                                        decoration: defaultPinTheme.decoration!
-                                            .copyWith(
+                                        decoration:
+                                        defaultPinTheme.decoration!.copyWith(
                                           border: Border.all(
-                                              color: AppColors.buttonColor,
-                                              width: 1),
+                                              color: AppColors.buttonColor, width: 1),
                                         ),
                                       ),
                                     ),
@@ -242,10 +214,14 @@ class _OtpVerifyState extends State<OtpVerify> {
                                       width: width,
                                       child: MaterialButton(
                                           shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                          onPressed: () =>
-                                              _verifyOtpWithBloc(context),
+                                              borderRadius: BorderRadius.circular(5)),
+                                          onPressed: () {
+                                            if(formkey.currentState!.validate()){
+                                              var payload= Login(phone: phone.text, otp: otpController.text);
+                                              print('Phone: ${phone.text}, Otp: ${otpController.text}');
+                                              BlocProvider.of<LoginBloc>(context).add(VerifyOtpEvent(payload, context));
+                                            }
+                                          },
                                           color: AppColors.buttonColor,
                                           padding: EdgeInsets.all(10),
                                           child: CommonPack().regularText(
@@ -265,11 +241,13 @@ class _OtpVerifyState extends State<OtpVerify> {
                   ),
                 ],
               ),
-            ),
+            ),),
           );
-        },
+        },),
       ),
     );
+
+
   }
 
   Widget otpMessage() {

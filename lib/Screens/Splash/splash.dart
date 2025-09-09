@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:ivf/Utils/common.dart';
 import 'package:flutter/material.dart';
-import 'package:ivf/Api/api_methods.dart';
+import 'package:ivf/Network/api_methods.dart';
 import 'package:ivf/Utils/app_colors.dart';
 
 import '../Login/login.dart';

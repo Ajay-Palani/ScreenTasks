@@ -1,27 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:ivf/Utils/app_colors.dart';
-import 'package:ivf/Api/api_methods.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ivf/Bloc/dashboard_bloc.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:ivf/Utils/app_colors.dart';
 import 'package:ivf/Utils/common.dart';
+import 'package:ivf/Bloc/dashboard_bloc.dart';
 
 class Dashboard extends StatefulWidget {
-  final String token;
-
-  Dashboard(this.token, {super.key});
+  const Dashboard({super.key});
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
-  String userName = "";
-  String dob = "";
-  String email = "";
-  String city = "";
-  String country = "";
+  String? userName;
+  DateTime? selectedDate;
 
   List<DateTime> dates = [
     DateTime.now(),
@@ -29,83 +22,21 @@ class _DashboardState extends State<Dashboard> {
     DateTime.now().add(Duration(days: 2)),
   ];
 
-  DateTime? selectedDate;
-  List<dynamic> availableSlots = [];
-  bool isLoadingSlots = false;
-
-  @override
-  void initState() {
-    super.initState();
-    getUser();
-  }
-
-  void getUser() async {
-    try {
-      final response = await ApiMethods().getData();
-      final user = response['data']['user'];
-      setState(() {
-        userName = "${user['firstName']} ${user['lastName']}";
-        dob = user['dateOfBirth'] ?? '';
-        email = user['email'] ?? '';
-        city = user['city'] ?? '';
-        country = user['country'] ?? '';
-      });
-    } catch (e) {
-      print("Error fetching user");
-    }
-  }
-
-  void getSlots(DateTime date) async {
-    setState(() {
-      isLoadingSlots = true;
-      availableSlots = [];
-    });
-
-    try {
-      final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      final response =
-          await ApiMethods().getTimeSlots(widget.token, formattedDate);
-      final slots = response['data']['availableSlots'];
-      setState(() {
-        availableSlots = slots;
-      });
-    } catch (e) {
-      print("Error fetching slots");
-      setState(() {
-        availableSlots = [];
-      });
-    } finally {
-      setState(() {
-        isLoadingSlots = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width * 1;
-    double height = MediaQuery.of(context).size.height * 1;
     return BlocProvider(
-      create: (context) =>
-          DashboardBloc()..add(FetchDashboardEvent(widget.token)),
+      create: (context) => DashboardBloc()..add(FetchDashboardEvent(context)),
       child: BlocBuilder<DashboardBloc, DashboardState>(
         builder: (context, state) {
-          if (state is DashboardLoading) {
-            return Shimmer.fromColors(
-                child: Container(
-                  width: width * 1,
-                  height: height * 0.4,
-                  child: Card(),
-                ),
-                baseColor: AppColors.bgColor,
-                highlightColor: Colors.grey);
-          }
+          // Main Dashboard Success
           if (state is DashboardSuccess) {
+            final user = state.user;
+            userName = '${user.firstName} ${user.lastName}';
+
             return Scaffold(
               backgroundColor: AppColors.bgColor,
               appBar: AppBar(
-                title: Text('Dashboard',
-                    style: TextStyle(color: AppColors.purple)),
+                title: Text('Dashboard', style: TextStyle(color: AppColors.purple)),
                 centerTitle: true,
                 backgroundColor: AppColors.bgColor,
               ),
@@ -114,15 +45,14 @@ class _DashboardState extends State<Dashboard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildProfileRow("Name", userName),
-                    buildProfileRow("DoB", dob),
-                    buildProfileRow("Email", email),
-                    buildProfileRow("City", city),
-                    buildProfileRow("Country", country),
+                    buildProfileRow("Name", userName!),
+                    buildProfileRow("DoB", user.dob),
+                    buildProfileRow("Email", user.email),
+                    buildProfileRow("City", user.city),
+                    buildProfileRow("Country", user.country),
                     SizedBox(height: 30),
                     Text("Select a Date",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -130,95 +60,73 @@ class _DashboardState extends State<Dashboard> {
                         final isSelected = selectedDate != null &&
                             DateFormat('yyyy-MM-dd').format(selectedDate!) ==
                                 DateFormat('yyyy-MM-dd').format(date);
+
                         return ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isSelected
-                                ? Colors.pinkAccent
-                                : Colors.grey[300],
+                            backgroundColor: isSelected ? Colors.pinkAccent : Colors.grey[300],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
                           onPressed: () {
-                            setState(() {
-                              selectedDate = date;
-                            });
-                            getSlots(date);
+                            setState(() => selectedDate = date);
+                            context.read<DashboardBloc>().add(
+                              FetchTimeSlotsEvent(
+                                  DateFormat('yyyy-MM-dd').format(date), context),
+                            );
                           },
                           child: Column(
                             children: [
                               Text(DateFormat('EEE').format(date),
                                   style: TextStyle(
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.black)),
+                                      color: isSelected ? Colors.white : Colors.black)),
                               Text(DateFormat('dd MMM').format(date),
                                   style: TextStyle(
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.black)),
+                                      color: isSelected ? Colors.white : Colors.black)),
                             ],
                           ),
                         );
                       }).toList(),
                     ),
                     SizedBox(height: 20),
-                    if (isLoadingSlots)
-                      Center(child: CircularProgressIndicator()),
-                    if (!isLoadingSlots && selectedDate != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Available Slots on ${DateFormat('dd MMM yyyy').format(selectedDate!)}',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 20),
-                          (availableSlots.isEmpty)
-                              ? Center(
-                                  child: Text('No slots available'),
-                                )
-                              : Center(
-                                  child: Wrap(
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: availableSlots.map((slot) {
-                                      final startTime = slot['startTime'];
-                                      final endTime = slot['endTime'];
-                                      final isBooked = slot['isBooked'];
-                                      return ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: isBooked
-                                              ? Colors.grey
-                                              : Colors.pinkAccent,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          padding: EdgeInsets.all(8),
-                                        ),
-                                        onPressed: isBooked
-                                            ? null
-                                            : () => showSlotDialog(
-                                                startTime, endTime),
-                                        child: Text('$startTime - $endTime',
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      );
-                                    }).toList(),
+
+                    if (selectedDate != null)
+                      BlocBuilder<DashboardBloc, DashboardState>(
+                        builder: (context, slotState) {
+                          if (slotState is TimeSlotsLoaded) {
+                            final slots = slotState.slots;
+                            if (slots.isEmpty) return Center(child: Text("No slots available"));
+                            return Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: slots.map((slot) {
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: slot['isBooked'] ? Colors.grey : Colors.pinkAccent,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                    padding: EdgeInsets.all(8),
                                   ),
-                                )
-                        ],
+                                  onPressed: slot['isBooked'] ? null : () => showSlotDialog(slot),
+                                  child: Text("${slot['startTime']} - ${slot['endTime']}",
+                                      style: TextStyle(color: Colors.white)),
+                                );
+                              }).toList(),
+                            );
+                          }
+                          else if (slotState is TimeSlotsError) {
+                            return Center(child: Text(slotState.message));
+                          }
+                          return SizedBox();
+                        },
                       ),
                   ],
                 ),
               ),
             );
-          } else {
-            return Scaffold(
-              body: Center(
-                child: Text('No data'),
-              ),
-            );
+          }
+
+          else{
+            return Scaffold(body: Center(child: Text('data'),),);
           }
         },
       ),
@@ -232,38 +140,34 @@ class _DashboardState extends State<Dashboard> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CommonPack().regularText(
-              text: title,
-              fontWeight: FontWeight.w500,
-              fontsize: 20,
-              color: AppColors.headText),
+              text: title, fontWeight: FontWeight.w500, fontsize: 20, color: AppColors.headText),
           CommonPack().regularText(
-              text: value,
-              fontWeight: FontWeight.w500,
-              fontsize: 20,
-              color: AppColors.headText),
+              text: value, fontWeight: FontWeight.w500, fontsize: 20, color: AppColors.headText),
         ],
       ),
     );
   }
 
-  void showSlotDialog(String startTime, String endTime) {
+  void showSlotDialog(Map<String, dynamic> slot) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirm Appointment'),
         content: Text(
-            'Name: $userName\nDate: ${DateFormat('dd MMM yyyy').format(selectedDate!)}\nTime: $startTime - $endTime'),
+          'Name: $userName\n'
+              'Date: ${DateFormat('dd MMM yyyy').format(selectedDate!)}\n'
+              'Time: ${slot['startTime']} - ${slot['endTime']}\n'
+              'Additional Info: ${slot['details'] ?? 'No details'}',
+        ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context), child: Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.buttonColor),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.buttonColor),
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
-                      'Appointment confirmed on ${DateFormat('dd MMM yyyy').format(selectedDate!)} at $startTime')));
+                      'Appointment confirmed on ${DateFormat('dd MMM yyyy').format(selectedDate!)} at ${slot['startTime']}')));
             },
             child: Text('Book Appointment'),
           ),
@@ -271,4 +175,5 @@ class _DashboardState extends State<Dashboard> {
       ),
     );
   }
+
 }

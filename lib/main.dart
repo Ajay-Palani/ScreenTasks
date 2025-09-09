@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:ivf/Utils/app_data_helper.dart';
 import 'Screens/Splash/splash.dart';
 import 'package:ivf/Screens/NewUser/basic_details.dart';
 import 'Screens/Dashboard/dashboard.dart';
@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      navigatorKey: AppDataHelper.navKey,
       home: Welcomepage(),
     );
   }
